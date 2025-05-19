@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioSync Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #121212;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e0e0e0;
+      padding: 2rem;
+    }
+
+    .dashboard-container {
+      display: flex;
+      width: 900px;
+      background: #1e1e1e;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      border: 1px solid #2e2e2e;
+      flex-wrap: wrap;
+    }
+
+    .image-section {
+      flex: 1;
+      background: 
+        linear-gradient(rgba(20, 20, 20, 0.7), rgba(20, 20, 20, 0.7)),
+        url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 3rem;
+      position: relative;
+      min-height: 600px;
+    }
+
+    .image-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(220, 53, 69, 0.15) 0%, rgba(20, 20, 20, 0.9) 100%);
+    }
+
+    .image-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .image-section h2 {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .image-section p {
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #b0b0b0;
+    }
+
+    .controls-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 3rem;
+      background: #252525;
+      overflow-y: auto;
+    }
+
+    .control-box {
+      background: #2d2d2d;
+      border-radius: 12px;
+      padding: 1.8rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      border-left: 4px solid #dc3545;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .control-box:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.2);
+      background: #333333;
+    }
+
+    .control-box h3 {
+      font-size: 1.4rem;
+      color: #ffffff;
+      margin-bottom: 0.8rem;
+      font-weight: 500;
+    }
+
+    .control-box p {
+      color: #a0a0a0;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .logo img {
+      width: 70px;
+      height: auto;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    }
+
+    .app-name {
+      font-size: 1.8rem;
+      margin-top: 1rem;
+      color: #ffffff;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+      .dashboard-container {
+        flex-direction: column;
+        width: 95%;
+        height: auto;
+        margin: 2rem 0;
+      }
+      
+      .image-section {
+        padding: 2rem;
+        min-height: 250px;
+      }
+      
+      .controls-section {
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <div class="image-section">
+      <div class="image-content">
+        <h2>BeatSavior</h2>
+        <p>Your intelligent heart attack management companion.</p>
+      </div>
+    </div>
+    
+    <div class="controls-section">
+      <div class="logo">
+        <img src="https://cdn-icons-png.flaticon.com/512/2966/2966484.png" alt="Heart Health Logo">
+        <div class="app-name">BeatSavior</div>
+      </div>
+      
+      <div class="control-box" onclick="location.href='register.html'">
+        <h3>Patient Registration</h3>
+        <p>Register new patients into the cardiac care monitoring system with complete medical profiles.</p>
+      </div>
+      
+      <div class="control-box" onclick="location.href='update.html'">
+        <h3>Update Records</h3>
+        <p>Modify existing patient information, treatment plans, and monitoring data.</p>
+      </div>
+      
+      <div class="control-box" onclick="location.href='delete.html'">
+        <h3>Manage Patients</h3>
+        <p>Remove patient records while maintaining data integrity.</p>
+      </div>
+
+      <div class="control-box" onclick="location.href='/emergency-records'">
+        <h3>View Emergency Records</h3>
+        <p>Access detailed emergency care history for each patient.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

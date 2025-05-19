@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BeatSavior</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: 
+        /* Dark overlay for contrast */
+        linear-gradient(rgba(10, 10, 20, 0.85), rgba(10, 10, 20, 0.9)),
+        /* Animated ECG line pattern */
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 20" preserveAspectRatio="none"><path d="M0,10 q5,-8 10,0 t10,0 t10,0 t10,0 t10,0 t10,0 t10,0 t10,0" stroke="rgba(220,53,69,0.3)" fill="none" stroke-width="0.5"/></svg>'),
+        /* Anatomical heart texture */
+        url('https://images.unsplash.com/photo-1631815588090-d4bfec5b1ccb?q=80&w=3000&auto=format&fit=crop') center/cover;
+      animation: pulseBackground 15s infinite alternate;
+    }
+
+    @keyframes pulseBackground {
+      0% { background-size: auto, 200% auto, cover; }
+      100% { background-size: auto, 300% auto, 105% 105%; }
+    }
+
+    .container {
+      background: rgba(15, 18, 22, 0.85);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3),
+                  0 0 0 1px rgba(255, 255, 255, 0.05),
+                  inset 0 0 0 1px rgba(220, 53, 69, 0.2);
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(220, 53, 69, 0.1);
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin-bottom: 1.5rem;
+      color: #fff;
+      font-size: 1.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .subheading {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 2rem;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.6rem;
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      background: rgba(30, 35, 40, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      transition: all 0.3s;
+      font-size: 0.95rem;
+      color: white;
+    }
+
+    input:focus {
+      border-color: rgba(220, 53, 69, 0.6);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+      background: rgba(40, 45, 50, 0.8);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 0.8rem;
+      background: linear-gradient(135deg, #dc3545 0%, #a71d2a 100%);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 45%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0) 55%
+      );
+      transform: rotate(30deg);
+      transition: all 0.5s;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #c82333 0%, #8a1620 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(220, 53, 69, 0.4);
+    }
+
+    .btn:hover::after {
+      left: 100%;
+    }
+
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .heart-icon {
+      animation: heartbeat 1.5s infinite;
+    }
+
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.1); }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    /* Error message styling */
+    .error-message {
+      color: #ff6b6b;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>
+      <svg class="heart-icon" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="#dc3545" stroke="#dc3545" stroke-width="2">
+        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      </svg>
+      BeatSavior
+    </h2>
+    <div class="subheading"> Cardiac Analytics Platform</div>
+    <form id="loginForm" method="POST">
+      <div class="input-group">
+        <label for="username">PHYSICIAN ID</label>
+        <input type="text" id="username" name="username" placeholder="Enter your provider ID" required />
+      </div>
+      <div class="input-group">
+        <label for="password">ACCESS CODE</label>
+        <input type="password" id="password" name="password_hash" placeholder="••••••••••" required />
+      </div>
+      <button class="btn" type="submit">AUTHENTICATE</button>
+      <div id="errorMessage" class="error-message"></div>
+    </form>
+    <div class="footer">© 2025 BeatSavior DBMS project</div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const errorElement = document.getElementById('errorMessage');
+      
+      // Clear previous errors
+      errorElement.style.display = 'none';
+      errorElement.textContent = '';
+      
+      try {
+        const response = await fetch('/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: username,
+            password: password
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          // Redirect to dashboard on successful login
+          window.location.href = '/dashboard.html';
+        } else {
+          // Show error message
+          errorElement.textContent = data.message || 'Invalid credentials';
+          errorElement.style.display = 'block';
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        errorElement.textContent = 'Network error occurred. Please try again.';
+        errorElement.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

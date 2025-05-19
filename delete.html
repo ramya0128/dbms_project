@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delete Patient | HMS</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --dark: #0f172a;
+      --darker: #020617;
+      --light: #f8fafc;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(rgba(2, 6, 23, 0.95), rgba(2, 6, 23, 0.98));
+      color: #e2e8f0;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: rgba(15, 23, 42, 0.8);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: #1e293b;
+      color: #7dd3fc;
+      font-weight: 600;
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    th:hover {
+      background-color: #1e40af;
+    }
+
+    th.sort-asc::after {
+      content: " ↑";
+      font-size: 0.75rem;
+    }
+
+    th.sort-desc::after {
+      content: " ↓";
+      font-size: 0.75rem;
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid #1e293b;
+      font-size: 0.875rem;
+    }
+
+    tr:hover {
+      background-color: rgba(30, 41, 59, 0.5);
+    }
+
+    .search-input {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid #1e293b;
+      color: #f8fafc;
+      transition: all 0.3s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .delete-btn {
+      background: linear-gradient(135deg, var(--danger), var(--danger-dark));
+      transition: all 0.3s ease;
+    }
+
+    .delete-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .pid-input {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid #1e293b;
+      color: #f8fafc;
+    }
+
+    .pid-input:focus {
+      border-color: var(--danger);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    }
+
+    .flash-message {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sort-options {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .sort-btn {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid #1e293b;
+      color: #7dd3fc;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .sort-btn:hover {
+      background: #1e40af;
+      border-color: #1e40af;
+    }
+
+    .sort-btn.active {
+      background: #1e40af;
+      border-color: #1e40af;
+      color: white;
+    }
+  </style>
+</head>
+<body class="py-8 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-white">Delete Patient Record</h1>
+        <p class="text-slate-400">Remove patient records from the system</p>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="mb-6 flex flex-col md:flex-row md:items-center gap-4">
+        <div class="flex-1">
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search by PID, First Name or Last Name..." 
+            class="search-input w-full px-4 py-2 rounded-lg focus:outline-none"
+          />
+        </div>
+        <div class="sort-options">
+          <button class="sort-btn" data-sort="pid">Sort by ID</button>
+          <button class="sort-btn" data-sort="fname">Sort by First Name</button>
+          <button class="sort-btn" data-sort="lname">Sort by Last Name</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table id="patient-table">
+          <thead>
+            <tr>
+              <th data-sort="pid">Patient ID</th>
+              <th data-sort="fname">First Name</th>
+              <th data-sort="lname">Last Name</th>
+              <th data-sort="age">Age</th>
+              <th data-sort="contact">Contact</th>
+            </tr>
+          </thead>
+          <tbody class="text-slate-300"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <form method="POST" action="/delete" onsubmit="return confirmDelete()" class="space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center gap-4">
+          <div class="flex-1">
+            <label for="pid" class="block text-sm font-medium text-slate-300 mb-1">Patient ID</label>
+            <input 
+              type="text" 
+              name="pid" 
+              id="pid" 
+              required 
+              class="pid-input w-full px-4 py-2 rounded-lg focus:outline-none"
+              placeholder="Enter patient ID to delete"
+            />
+          </div>
+          <div class="md:self-end">
+            <button 
+              type="submit" 
+              class="delete-btn px-6 py-2.5 text-white font-medium rounded-lg focus:outline-none"
+            >
+              Delete Patient Record
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <div id="flash-message" class="flash-message mt-4 text-center"></div>
+    </div>
+
+    <div class="text-center text-slate-500 text-sm mt-8">
+      © Heart Attack Management System
+    </div>
+  </div>
+
+  <script>
+    let allPatients = [];
+    let currentPatients = [];
+    let currentSortField = null;
+    let sortDirection = 'asc';
+
+    // Fetch patient data
+    fetch('/all_tables')
+      .then(res => res.json())
+      .then(data => {
+        const patientTable = data.find(table => table.name === 'patient');
+        if (patientTable && patientTable.data.length > 0) {
+          allPatients = patientTable.data;
+          renderPatients(allPatients);
+        } else {
+          showNoDataMessage();
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching patient data:', error);
+        showErrorMessage();
+      });
+
+    function renderPatients(data) {
+      currentPatients = data;
+      const tbody = document.querySelector("#patient-table tbody");
+      tbody.innerHTML = "";
+
+      if (data.length === 0) {
+        showNoDataMessage();
+        return;
+      }
+
+      data.forEach(row => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-900/50 transition-colors";
+        tr.innerHTML = `
+          <td class="font-medium">${row.PID}</td>
+          <td>${row.FNAME || '-'}</td>
+          <td>${row.LNAME || '-'}</td>
+          <td>${row.AGE || '-'}</td>
+          <td>${row.CONTACT || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showNoDataMessage() {
+      document.querySelector("#patient-table tbody").innerHTML = `
+        <tr>
+          <td colspan="5" class="py-8 text-center text-slate-400">
+            No patient records found
+          </td>
+        </tr>
+      `;
+    }
+
+    function showErrorMessage() {
+      document.querySelector("#patient-table tbody").innerHTML = `
+        <tr>
+          <td colspan="5" class="py-8 text-center text-red-400">
+            Error loading patient data. Please try again.
+          </td>
+        </tr>
+      `;
+    }
+
+    // Search input
+    document.getElementById("search-input").addEventListener("input", (e) => {
+      const keyword = e.target.value.toLowerCase();
+
+      if (keyword.length === 0) {
+        renderPatients(allPatients);
+        return;
+      }
+
+      const filtered = allPatients.filter(p => {
+        return (
+          String(p.PID).toLowerCase().includes(keyword) ||
+          String(p.FNAME).toLowerCase().includes(keyword) ||
+          String(p.LNAME).toLowerCase().includes(keyword)
+        );
+      });
+
+      renderPatients(filtered);
+    });
+
+    // Sort functionality
+    document.querySelectorAll('[data-sort]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const sortField = this.dataset.sort;
+
+        if (currentSortField === sortField) {
+          sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+          currentSortField = sortField;
+          sortDirection = 'asc';
+        }
+
+        updateSortUI();
+
+        const sortedPatients = sortPatients(currentPatients, sortField, sortDirection);
+        renderPatients(sortedPatients);
+      });
+    });
+
+  function sortPatients(patients, field, direction) {
+  return [...patients].sort((a, b) => {
+    let valA = String(a[field.toUpperCase()] || '').toLowerCase();
+    let valB = String(b[field.toUpperCase()] || '').toLowerCase();
+
+    // Special handling for 'PID' to treat it as a number
+    if (field.toUpperCase() === "PID") {
+      valA = Number(valA);  // Convert to number
+      valB = Number(valB);  // Convert to number
+    }
+
+    if (valA < valB) return direction === 'asc' ? -1 : 1;
+    if (valA > valB) return direction === 'asc' ? 1 : -1;
+    return 0;
+  });
+}
+
+    function updateSortUI() {
+      document.querySelectorAll('[data-sort]').forEach(el => {
+        el.classList.remove('sort-asc', 'sort-desc');
+      });
+
+      const activeHeader = document.querySelector(`[data-sort="${currentSortField}"]`);
+      if (activeHeader) {
+        activeHeader.classList.add(sortDirection === 'asc' ? 'sort-asc' : 'sort-desc');
+      }
+
+      document.querySelectorAll('.sort-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.sort === currentSortField) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+   function confirmDelete() {
+  const pid = document.getElementById("pid").value.trim();
+
+  if (!pid) {
+    showFlashMessage("Please enter a Patient ID.", "error");
+    return false;
+  }
+
+  const patientExists = allPatients.some(p => String(p.PID) === pid);
+
+  if (!patientExists) {
+    showFlashMessage(`Patient ID "${pid}" not found in the database.`, "error");
+    return false;
+  }
+
+  return confirm(`Are you absolutely sure you want to delete patient with ID: ${pid}?\nThis action cannot be undone.`);
+}
+
+
+    // Show flash message if deleted
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('deleted') === 'true') {
+      showFlashMessage('Patient record deleted successfully', 'success');
+    }
+
+    function showFlashMessage(message, type) {
+      const flashMsg = document.getElementById("flash-message");
+      const colorClass = type === 'success' ? 'bg-green-900/30 text-green-400 border-green-800/50' : 'bg-red-900/30 text-red-400 border-red-800/50';
+
+      flashMsg.innerHTML = `
+        <div class="inline-flex items-center ${colorClass} text-sm font-medium px-4 py-2 rounded-lg border">
+          <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}" />
+          </svg>
+          ${message}
+        </div>
+      `;
+
+      setTimeout(() => {
+        flashMsg.innerHTML = '';
+      }, 5000);
+    }
+  </script>
+</body>
+</html>

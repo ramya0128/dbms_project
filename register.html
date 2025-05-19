@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
+      --secondary: #8b5cf6;
+      --danger: #ef4444;
+      --success: #10b981;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --glass: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.3);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    
+    .glass-card {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .glass-card:hover {
+      box-shadow: 0 12px 40px rgba(31, 38, 135, 0.15);
+      transform: translateY(-4px);
+    }
+    
+    .input {
+      width: 100%;
+      padding: 14px 18px;
+      margin-top: 6px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      color: var(--dark);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 15px;
+    }
+    
+    .input:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+      background: rgba(255, 255, 255, 1);
+    }
+    
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      padding: 10px 0;
+      transition: all 0.2s ease;
+    }
+    
+    .checkbox-label:hover {
+      color: var(--primary);
+      transform: translateX(4px);
+    }
+    
+    input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    input[type="checkbox"]:hover {
+      transform: scale(1.1);
+    }
+    
+    textarea.input {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    select.input {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%233b82f6'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1em;
+    }
+    
+    .readonly-input {
+      background: rgba(237, 242, 247, 0.9) !important;
+      color: #64748b !important;
+      cursor: not-allowed;
+    }
+    
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+      overflow-y: auto;
+      backdrop-filter: blur(8px);
+    }
+    
+    .modal-content {
+      background: white;
+      margin: 5% auto;
+      padding: 2.5rem;
+      border-radius: 20px;
+      width: 85%;
+      max-width: 800px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+      animation: modalFadeIn 0.4s ease-out;
+    }
+    
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .close-modal {
+      color: #94a3b8;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .close-modal:hover {
+      color: var(--danger);
+      transform: rotate(90deg);
+    }
+    
+    .data-display {
+      background: rgba(241, 245, 249, 0.7);
+      padding: 1.5rem;
+      border-radius: 16px;
+      margin-top: 1.5rem;
+    }
+    
+    .data-item {
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #e2e8f0;
+      transition: all 0.2s ease;
+    }
+    
+    .data-item:hover {
+      transform: translateX(4px);
+    }
+    
+    .data-label {
+      font-weight: 600;
+      color: var(--primary);
+      display: inline-block;
+      width: 200px;
+    }
+    
+    .data-value {
+      color: var(--dark);
+    }
+    
+    .section-icon {
+      color: white;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 12px rgba(59, 130, 246, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(59, 130, 246, 0.4);
+    }
+    
+    .submit-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -60%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.3) 0%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: rotate(30deg);
+      transition: all 0.3s ease;
+    }
+    
+    .submit-btn:hover::after {
+      left: 100%;
+    }
+    
+    .form-title {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .floating-label {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.floating-label label {
+  position: absolute;
+  top: 18px;
+  left: 16px;
+  color: #94a3b8;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  background: white;
+  padding: 0 6px;
+}
+
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label,
+.floating-label select:focus + label,
+.floating-label select:not([value=""]) + label,
+.floating-label textarea:focus + label,
+.floating-label textarea:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 12px;
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.floating-label input,
+.floating-label select,
+.floating-label textarea {
+  padding-top: 20px;
+  padding-bottom: 12px;
+}
+
+.floating-label textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+    .bmi-underweight {
+      background-color: #3b82f6;
+      color: white;
+    }
+    .bmi-normal {
+      background-color: #10b981;
+      color: white;
+    }
+    .bmi-overweight {
+      background-color: #ef4444;
+      color: white;
+    }
+    
+    /* Step navigation */
+    .step-nav {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 1rem;
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 24px;
+      left: 100%;
+      width: 2rem;
+      height: 2px;
+      background: #cbd5e1;
+    }
+    
+    .step-number {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e2e8f0;
+      color: #64748b;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    
+    .step-item.active .step-number {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .step-item.completed .step-number {
+      background: var(--success);
+      color: white;
+    }
+    
+    .step-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #64748b;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .step-item.active .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
+    .step-item.completed .step-label {
+      color: var(--success);
+    }
+    
+    /* Form step styling */
+    .form-step {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .form-step.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Navigation buttons */
+    .form-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+    }
+    
+    .nav-btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-btn.prev {
+      background: #e2e8f0;
+      color: #64748b;
+    }
+    
+    .nav-btn.prev:hover {
+      background: #cbd5e1;
+    }
+    
+    .nav-btn.next {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .nav-btn.next:hover {
+      background: var(--primary-dark);
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .glass-card {
+        padding: 1.5rem;
+      }
+      
+      .section-icon {
+        width: 40px;
+        height: 40px;
+      }
+      
+      .step-item {
+        padding: 0 0.5rem;
+      }
+      
+      .step-item:not(:last-child)::after {
+        width: 1rem;
+      }
+      
+      .step-number {
+        width: 36px;
+        height: 36px;
+        font-size: 0.875rem;
+      }
+    }
+  </style>
+</head>
+<body class="py-12 px-4">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-8">
+      <h1 class="text-5xl font-bold mb-3 form-title">Patient Registration</h1>
+      <p class="text-slate-600 max-w-2xl mx-auto text-lg">Complete this multi-step form to register new patients in our healthcare system.</p>
+    </div>
+
+    <!-- Step Navigation -->
+    <div class="step-nav">
+      <div class="step-item active" data-step="1">
+        <div class="step-number">1</div>
+        <div class="step-label">Patient Details</div>
+      </div>
+      <div class="step-item" data-step="2">
+        <div class="step-number">2</div>
+        <div class="step-label">Lifestyle</div>
+      </div>
+      <div class="step-item" data-step="3">
+        <div class="step-number">3</div>
+        <div class="step-label">Emergency Info</div>
+      </div>
+      <div class="step-item" data-step="4">
+        <div class="step-number">4</div>
+        <div class="step-label">Doctor Info</div>
+      </div>
+      <div class="step-item" data-step="5">
+        <div class="step-number">5</div>
+        <div class="step-label">Medical Info</div>
+      </div>
+      <div class="step-item" data-step="6">
+        <div class="step-number">6</div>
+        <div class="step-label">Cardiac Info</div>
+      </div>
+      <div class="step-item" data-step="7">
+        <div class="step-number">7</div>
+        <div class="step-label">History</div>
+      </div>
+      <div class="step-item" data-step="8">
+        <div class="step-number">8</div>
+        <div class="step-label">Treatment</div>
+      </div>
+    </div>
+
+    <form id="patientForm" class="space-y-8">
+
+      <!-- Step 1: Patient Details -->
+      <div class="form-step active" id="step-1">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-user-injured text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Patient Details
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="floating-label">
+              <input type="text" name="pid" placeholder=" " required class="input required-field" id="pid" />
+              <label for="pid">Patient ID</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="fname" placeholder=" " required class="input required-field" id="fname" />
+              <label for="fname">First Name</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="lname" placeholder=" " required class="input required-field" id="lname" />
+              <label for="lname">Last Name</label>
+            </div>
+            <div class="floating-label">
+              <input type="number" name="age" placeholder=" " required class="input required-field" id="age" min="0" max="130" />
+              <label for="age">Age</label>
+            </div>
+            <div class="floating-label">
+              <input type="date" name="dob" required class="input required-field" id="dob" max="" />
+              <label for="dob">Date of Birth</label>
+            </div>
+            <div class="floating-label">
+              <select name="gender" class="input required-field" required id="gender">
+                <option value=""></option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+                <option value="Prefer not to say">Prefer not to say</option>
+              </select>
+              <label for="gender">Gender</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="address" placeholder=" " class="input" id="address" />
+              <label for="address">Address</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="contact" placeholder=" " class="input" id="contact" />
+              <label for="contact">Contact Number</label>
+            </div>
+            <div class="floating-label">
+              <input type="email" name="email" placeholder=" " required class="input required-field" id="email" />
+              <label for="email">Email Address</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn next" data-next="2">Next <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 2: Lifestyle -->
+      <div class="form-step" id="step-2">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-heartbeat text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Lifestyle Factors
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 gap-4">
+            <label class="checkbox-label">
+              <input type="checkbox" name="smoking_status" />
+              <span class="text-slate-700 font-medium">Smoking</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="alcohol_consumption" />
+              <span class="text-slate-700 font-medium">Alcohol Consumption</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="drug_intake" />
+              <span class="text-slate-700 font-medium">Drug Use</span>
+            </label>
+            <div class="floating-label">
+              <select id="physical_activity" name="physical_activity" required class="input required-field">
+                <option value=""></option>
+                <option value="Sedentary">Sedentary (little or no exercise)</option>
+                <option value="Lightly Active">Lightly Active (light exercise/sports 1-3 days/week)</option>
+                <option value="Moderately Active">Moderately Active (moderate exercise/sports 3-5 days/week)</option>
+                <option value="Very Active">Very Active (hard exercise/sports 6-7 days/week)</option>
+                <option value="Super Active">Super Active (very hard exercise & physical job)</option>
+              </select>
+              <label for="physical_activity">Physical Activity Level</label>
+            </div>
+            <div class="floating-label">
+              <select id="diet_preferences" name="diet_preferences" required class="input required-field">
+                <option value=""></option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Non-Vegetarian">Non-Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Pescatarian">Pescatarian (fish eater)</option>
+                <option value="Keto">Keto</option>
+                <option value="Other">Other</option>
+              </select>
+              <label for="diet_preferences">Diet Preferences</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn prev" data-prev="1"><i class="fas fa-arrow-left mr-2"></i> Previous</button>
+          <button type="button" class="nav-btn next" data-next="3">Next <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 3: Emergency -->
+      <div class="form-step" id="step-3">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-ambulance text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Emergency Information
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="floating-label">
+              <input type="text" name="ename" placeholder=" " class="input" id="ename" />
+              <label for="ename">Emergency Contact Name</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="emergency_contact" placeholder=" " class="input" id="emergency_contact" />
+              <label for="emergency_contact">Emergency Contact Number</label>
+            </div>
+            <div class="floating-label">
+              <select name="preferredHospital" id="hospitalDropdown" class="input">
+                <option value=""></option>
+                <!-- Options will be populated by JavaScript -->
+              </select>
+              <label for="hospitalDropdown">Preferred Hospital</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="HOSNO" id="hospitalContact" placeholder=" " class="input readonly-input" readonly />
+              <label for="hospitalContact">Hospital Contact</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn prev" data-prev="2"><i class="fas fa-arrow-left mr-2"></i> Previous</button>
+          <button type="button" class="nav-btn next" data-next="4">Next <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 4: Doctor Info -->
+      <div class="form-step" id="step-4">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-user-md text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Assigned Doctor
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="floating-label">
+              <select name="did" id="doctorDropdown" class="input required-field" required>
+                <option value=""></option>
+                <!-- Options will be populated by JavaScript -->
+              </select>
+              <label for="doctorDropdown">Doctor</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="DCONTACT" id="doctorContact" placeholder=" " class="input readonly-input" readonly />
+              <label for="doctorContact">Doctor Contact</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="HNAME" id="doctorHospital" placeholder=" " class="input readonly-input" readonly />
+              <label for="doctorHospital">Hospital Name</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn prev" data-prev="3"><i class="fas fa-arrow-left mr-2"></i> Previous</button>
+          <button type="button" class="nav-btn next" data-next="5">Next <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 5: Medical Info -->
+      <div class="form-step" id="step-5">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-file-medical text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Medical Information
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="floating-label">
+              <input type="number" name="bodyweight" placeholder=" " class="input" id="bodyweight" />
+              <label for="bodyweight">Body Weight (kg)</label>
+            </div>
+            <div class="floating-label">
+              <input type="number" name="height" placeholder=" " class="input" id="height" />
+              <label for="height">Height (cm)</label>
+            </div>
+            <div class="floating-label">
+              <input type="number" step="0.01" name="bmi" placeholder=" " class="input readonly-input" id="bmi" readonly />
+              <label for="bmi">BMI</label>
+            </div>
+            <div class="floating-label">
+              <input type="number" id="cholestrol" name="cholestrol" min="50" max="300" required class="input required-field" />
+              <label for="cholestrol">Cholesterol (50-300 mg/dL)</label>
+            </div>
+            <div class="floating-label">
+              <select name="bloodtype" id="bloodtype" required class="input required-field">
+                <option value=""></option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+              <label for="bloodtype">Blood Type</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="blood_pressure" placeholder=" " class="input" id="blood_pressure" />
+              <label for="blood_pressure">Blood Pressure</label>
+            </div>
+            <div class="floating-label">
+              <select name="diabetes" id="diabetes" class="input">
+                <option value="None">None</option>
+                <option value="Type 1">Type 1</option>
+                <option value="Type 2">Type 2</option>
+                <option value="Gestational">Gestational</option>
+              </select>
+              <label for="diabetes">Diabetes</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn prev" data-prev="4"><i class="fas fa-arrow-left mr-2"></i> Previous</button>
+          <button type="button" class="nav-btn next" data-next="6">Next <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 6: Cardiac Information -->
+      <div class="form-step" id="step-6">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-heart text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Cardiac Information
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="floating-label">
+              <input type="number" name="heart_block_percentage" placeholder=" " min="0" max="100" class="input" id="heart_block" />
+              <label for="heart_block">Heart Block Percentage</label>
+            </div>
+            <div class="floating-label">
+              <select name="heart_attack_type" class="input" id="heart_attack_type">
+                <option value=""></option>
+                <option value="STEMI">STEMI (ST-elevation myocardial infarction)</option>
+                <option value="NSTEMI">NSTEMI (Non-ST-elevation myocardial infarction)</option>
+                <option value="Silent">Silent Ischemia</option>
+                <option value="Coronary">Coronary Artery Spasm</option>
+                <option value="Other">Other</option>
+              </select>
+              <label for="heart_attack_type">Type of Heart Attack</label>
+            </div>
+            <div class="floating-label">
+              <input type="date" name="surgery_date" class="input" id="surgery_date" max="" />
+              <label for="surgery_date">Date of Surgery</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="prevattack_history" placeholder=" " class="input" id="prevattack" />
+              <label for="prevattack">Previous Attack History</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="heartrate" placeholder=" " class="input" id="heartrate" />
+              <label for="heartrate">Heart Rate</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn prev" data-prev="5"><i class="fas fa-arrow-left mr-2"></i> Previous</button>
+          <button type="button" class="nav-btn next" data-next="7">Next <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 7: History -->
+      <div class="form-step" id="step-7">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-history text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Patient History
+            </h3>
+          </div>
+          <div class="floating-label">
+            <textarea name="medical_history" placeholder=" " class="input mb-4" rows="3" id="medical_history"></textarea>
+            <label for="medical_history">Medical History</label>
+          </div>
+          <div class="floating-label">
+            <textarea name="family_history" placeholder=" " class="input" rows="3" id="family_history"></textarea>
+            <label for="family_history">Family History</label>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn prev" data-prev="6"><i class="fas fa-arrow-left mr-2"></i> Previous</button>
+          <button type="button" class="nav-btn next" data-next="8">Next <i class="fas fa-arrow-right ml-2"></i></button>
+        </div>
+      </div>
+
+      <!-- Step 8: Treatment -->
+      <div class="form-step" id="step-8">
+        <div class="glass-card p-8">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="section-icon">
+              <i class="fas fa-procedures text-xl"></i>
+            </div>
+            <h3 class="text-2xl font-semibold text-slate-800">
+              Treatment Plan
+            </h3>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="floating-label">
+              <input type="text" name="treatment_plan" placeholder=" " class="input" id="treatment_plan" />
+              <label for="treatment_plan">Treatment Plan</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="monitoring_data" placeholder=" " class="input" id="monitoring_data" />
+              <label for="monitoring_data">Monitoring Data</label>
+            </div>
+            <div class="floating-label">
+              <input type="text" name="surgery_details" placeholder=" " class="input" id="surgery_details" />
+              <label for="surgery_details">Surgery Details</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-navigation">
+          <button type="button" class="nav-btn prev" data-prev="7"><i class="fas fa-arrow-left mr-2"></i> Previous</button>
+          <button type="submit" class="px-12 py-5 text-white text-lg font-bold rounded-full submit-btn">
+            <i class="fas fa-paper-plane mr-3"></i>
+            Submit Patient Data
+          </button>
+        </div>
+      </div>
+
+      <div id="responseMsg" class="mt-6 text-center text-base font-medium"></div>
+    </form>
+  </div>
+
+  <!-- Modal for displaying submitted data -->
+  <div id="submittedDataModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2 class="text-2xl font-bold text-slate-800 mb-4">Submitted Patient Data</h2>
+      <div id="submittedDataDisplay" class="data-display">
+        <!-- Data will be displayed here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- New modal for joined tables display -->
+  <div id="joinedTableModal" class="modal">
+    <div class="modal-content" style="max-width: 90%;">
+      <span class="close-modal" onclick="document.getElementById('joinedTableModal').style.display='none'">&times;</span>
+      <h2 class="text-2xl font-bold text-slate-800 mb-4">Patient-Hospital-Doctor Relations</h2>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="bg-slate-100">
+              <th class="px-6 py-3 text-left">Patient ID</th>
+              <th class="px-6 py-3 text-left">Patient Name</th>
+              <th class="px-6 py-3 text-left">Hospital</th>
+              <th class="px-6 py-3 text-left">Doctor</th>
+            </tr>
+          </thead>
+          <tbody id="joinedTableBody">
+            <!-- Data will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Doctor data from your table
+    const doctors = [
+      { id: 1, name: "Dr. Anil Mehta", contact: "9876543210", hospitalId: "H001", hospital: "Apollo Hospital" },
+      { id: 2, name: "Dr. Ritu Sharma", contact: "9876543211", hospitalId: "H002", hospital: "Fortis Healthcare" },
+      { id: 3, name: "Dr. Vikram Patel", contact: "9876543212", hospitalId: "H003", hospital: "AIIMS Delhi" },
+      { id: 4, name: "Dr. Neha Bansal", contact: "9876543213", hospitalId: "H004", hospital: "Max Hospital" },
+      { id: 5, name: "Dr. Arjun Rao", contact: "9876543214", hospitalId: "H005", hospital: "Medanta Medicity" },
+      { id: 6, name: "Dr. Priya Nair", contact: "9876543215", hospitalId: "H006", hospital: "Columbia Asia" },
+      { id: 7, name: "Dr. Karan Gupta", contact: "9876543216", hospitalId: "H007", hospital: "Narayana Health" },
+      { id: 8, name: "Dr. Meera Joshi", contact: "9876543217", hospitalId: "H008", hospital: "Lilavati Hospital" },
+      { id: 9, name: "Dr. Rajeev Das", contact: "9876543218", hospitalId: "H009", hospital: "Kokilaben Hospital" },
+      { id: 10, name: "Dr. Sneha Iyer", contact: "9876543219", hospitalId: "H010", hospital: "Manipal Hospital" },
+      { id: 11, name: "Dr. Suresh Kumar", contact: "9876543220", hospitalId: "H011", hospital: "Ruby Hall Clinic" },
+      { id: 12, name: "Dr. Ananya Sen", contact: "9876543221", hospitalId: "H012", hospital: "Care Hospitals" },
+      { id: 13, name: "Dr. Imran Qureshi", contact: "9876543222", hospitalId: "H013", hospital: "Sunshine Hospital" },
+      { id: 14, name: "Dr. Kavita Menon", contact: "9876543223", hospitalId: "H014", hospital: "Cloudnine Hospital" },
+      { id: 15, name: "Dr. Nikhil Jain", contact: "9876543224", hospitalId: "H015", hospital: "Sir Ganga Ram Hospital" },
+      { id: 16, name: "Dr. Pooja Mishra", contact: "9876543225", hospitalId: "H016", hospital: "Jehangir Hospital" },
+      { id: 17, name: "Dr. Ashok Verma", contact: "9876543226", hospitalId: "H017", hospital: "Tata Memorial Hospital" },
+      { id: 18, name: "Dr. Radhika Shetty", contact: "9876543227", hospitalId: "H018", hospital: "Saifee Hospital" },
+      { id: 19, name: "Dr. Harsh Singh", contact: "9876543228", hospitalId: "H019", hospital: "Breach Candy Hospital" },
+      { id: 20, name: "Dr. Alok Bhatt", contact: "9876543229", hospitalId: "H020", hospital: "Hinduja Hospital" }
+    ];
+
+    // Hospital data from your table
+    const hospitals = [
+      { id: "H001", name: "Apollo Hospital", contact: "011-2223344", location: "Delhi, India" },
+      { id: "H002", name: "Fortis Healthcare", contact: "011-2233445", location: "Gurgaon, India" },
+      { id: "H003", name: "AIIMS Delhi", contact: "011-2233446", location: "Delhi, India" },
+      { id: "H004", name: "Max Hospital", contact: "011-2233447", location: "Noida, India" },
+      { id: "H005", name: "Medanta Medicity", contact: "011-2233448", location: "Gurgaon, India" },
+      { id: "H006", name: "Columbia Asia", contact: "011-2233449", location: "Bangalore, India" },
+      { id: "H007", name: "Narayana Health", contact: "011-2233450", location: "Bangalore, India" },
+      { id: "H008", name: "Lilavati Hospital", contact: "011-2233451", location: "Mumbai, India" },
+      { id: "H009", name: "Kokilaben Hospital", contact: "011-2233452", location: "Mumbai, India" },
+      { id: "H010", name: "Manipal Hospital", contact: "011-2233453", location: "Bangalore, India" },
+      { id: "H011", name: "Ruby Hall Clinic", contact: "011-2233454", location: "Pune, India" },
+      { id: "H012", name: "Care Hospitals", contact: "011-2233455", location: "Hyderabad, India" },
+      { id: "H013", name: "Sunshine Hospital", contact: "011-2233456", location: "Hyderabad, India" },
+      { id: "H014", name: "Cloudnine Hospital", contact: "011-2233457", location: "Chennai, India" },
+      { id: "H015", name: "Sir Ganga Ram Hospital", contact: "011-2233458", location: "Delhi, India" },
+      { id: "H016", name: "Jehangir Hospital", contact: "011-2233459", location: "Pune, India" },
+      { id: "H017", name: "Tata Memorial Hospital", contact: "011-2233460", location: "Mumbai, India" },
+      { id: "H018", name: "Saifee Hospital", contact: "011-2233461", location: "Mumbai, India" },
+      { id: "H019", name: "Breach Candy Hospital", contact: "011-2233462", location: "Mumbai, India" },
+      { id: "H020", name: "Hinduja Hospital", contact: "011-2233463", location: "Mumbai, India" }
+    ];
+
+    // Modal functionality
+    const modal = document.getElementById("submittedDataModal");
+    const closeModal = document.querySelector(".close-modal");
+    
+    closeModal.addEventListener("click", function() {
+      modal.style.display = "none";
+    });
+    
+    window.addEventListener("click", function(event) {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+
+    // Function to display joined tables
+    async function displayJoinedTables() {
+      try {
+        const response = await fetch('/api/patient-hospital-doctor');
+        if (!response.ok) throw new Error('Network response was not ok');
+        
+        const data = await response.json();
+        const tableBody = document.getElementById('joinedTableBody');
+        
+        tableBody.innerHTML = data.map(item => `
+          <tr class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="px-6 py-4">${item.PID}</td>
+            <td class="px-6 py-4">${item.patient_name}</td>
+            <td class="px-6 py-4">${item.hospital_name}</td>
+            <td class="px-6 py-4">${item.doctor_name}</td>
+          </tr>
+        `).join('');
+        
+        document.getElementById('joinedTableModal').style.display = 'block';
+      } catch (error) {
+        console.error('Error fetching joined data:', error);
+        document.getElementById('joinedTableBody').innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center py-4 text-red-500">
+              Error loading data: ${error.message}
+            </td>
+          </tr>
+        `;
+        document.getElementById('joinedTableModal').style.display = 'block';
+      }
+    }
+
+    // Function to display submitted data in modal
+    function displaySubmittedData(formData) {
+      const dataDisplay = document.getElementById("submittedDataDisplay");
+      dataDisplay.innerHTML = "";
+      
+      // Create a display object with formatted labels
+      const displayData = {
+        "Patient ID": formData.get("pid"),
+        "Name": `${formData.get("fname")} ${formData.get("lname")}`,
+        "Age": formData.get("age"),
+        "Date of Birth": formData.get("dob"),
+        "Gender": formData.get("gender"),
+        "Address": formData.get("address"),
+        "Contact": formData.get("contact"),
+        "Email": formData.get("email"),
+        "Lifestyle Factors": [
+          formData.get("smoking_status") ? "Smoking" : null,
+          formData.get("alcohol_consumption") ? "Alcohol Consumption" : null,
+          formData.get("drug_intake") ? "Drug Use" : null
+        ].filter(Boolean).join(", ") || "None",
+        "Physical Activity": formData.get("physical_activity"),
+        "Diet Preferences": formData.get("diet_preferences"),
+        "Emergency Contact": formData.get("emergency_contact"),
+        "Preferred Hospital": hospitals.find(h => h.id === formData.get("preferredHospital"))?.name || "Not specified",
+        "Assigned Doctor": doctors.find(d => d.id == formData.get("did"))?.name || "Not specified",
+        "Doctor Contact": formData.get("DCONTACT"),
+        "Doctor's Hospital": formData.get("HNAME"),
+        "Medical Information": [
+          `Weight: ${formData.get("bodyweight")} kg`,
+          `Height: ${formData.get("height")} cm`,
+          `BMI: ${formData.get("bmi")}`,
+          `Blood Type: ${formData.get("bloodtype")}`,
+          `Cholesterol: ${formData.get("cholestrol")}`,
+          `Blood Pressure: ${formData.get("blood_pressure")}`,
+          `Diabetes: ${formData.get("diabetes")}`
+        ].join(", "),
+        "Cardiac Information": [
+          `Heart Block: ${formData.get("heart_block_percentage") || '0'}%`,
+          `Heart Attack Type: ${formData.get("heart_attack_type") || 'Not specified'}`,
+          `Surgery Date: ${formData.get("surgery_date") || 'Not specified'}`,
+          `Previous Heart Attack History: ${formData.get("prevattack_history") || 'Not specified'}`,
+          `Heart Rate: ${formData.get("heartrate")}`
+        ].join(", "),
+        "Medical History": formData.get("medical_history") || "None provided",
+        "Family History": formData.get("family_history") || "None provided",
+        "Treatment Plan": formData.get("treatment_plan") || "Not specified",
+        "Monitoring Data": formData.get("monitoring_data") || "Not specified",
+        "Surgery Details": formData.get("surgery_details") || "Not specified"
+      };
+      
+      
+      // Add each data item to the display
+      for (const [label, value] of Object.entries(displayData)) {
+        if (value) {
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "data-item";
+          itemDiv.innerHTML = `
+            <span class="data-label">${label}:</span>
+            <span class="data-value">${value}</span>
+          `;
+          dataDisplay.appendChild(itemDiv);
+        }
+      }
+      // Show the modal
+      modal.style.display = "block";
+    }
+
+    // Step navigation functionality
+    function showStep(stepNumber) {
+      // Hide all steps
+      document.querySelectorAll('.form-step').forEach(step => {
+        step.classList.remove('active');
+      });
+      
+      // Show current step
+      document.getElementById(`step-${stepNumber}`).classList.add('active');
+      
+      // Update step navigation
+      document.querySelectorAll('.step-item').forEach(item => {
+        item.classList.remove('active');
+        if (parseInt(item.dataset.step) < stepNumber) {
+          item.classList.add('completed');
+        } else if (parseInt(item.dataset.step) === stepNumber) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('completed');
+        }
+      });
+    }
+
+    // Initialize step navigation
+    document.querySelectorAll('.nav-btn.next').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const nextStep = this.dataset.next;
+        showStep(nextStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    document.querySelectorAll('.nav-btn.prev').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const prevStep = this.dataset.prev;
+        showStep(prevStep);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    // Allow clicking on step items to navigate
+    document.querySelectorAll('.step-item').forEach(item => {
+      item.addEventListener('click', function() {
+        const stepNumber = this.dataset.step;
+        showStep(stepNumber);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    // Populate dropdowns on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const doctorDropdown = document.getElementById('doctorDropdown');
+      const hospitalDropdown = document.getElementById('hospitalDropdown');
+      
+      // Populate doctor dropdown
+      doctors.forEach(doctor => {
+        const option = document.createElement('option');
+        option.value = doctor.id;
+        option.textContent = `${doctor.id} - ${doctor.name} (${doctor.hospital})`;
+        option.setAttribute('data-hospital-id', doctor.hospitalId);
+        doctorDropdown.appendChild(option);
+      });
+      
+      // Populate hospital dropdown
+      hospitals.forEach(hospital => {
+        const option = document.createElement('option');
+        option.value = hospital.id;
+        option.textContent = `${hospital.id} - ${hospital.name} (${hospital.location})`;
+        hospitalDropdown.appendChild(option);
+      });
+      
+      // Initialize floating labels
+      document.querySelectorAll('.floating-label input, .floating-label select').forEach(el => {
+        if (el.value) {
+          const label = el.nextElementSibling;
+          label.style.top = '-10px';
+          label.style.left = '12px';
+          label.style.fontSize = '13px';
+          label.style.color = '#3b82f6';
+          label.style.fontWeight = '500';
+        }
+      });
+      
+      // Set max date for surgery date
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('surgery_date').max = today;
+      //set max date for dob
+       document.getElementById('dob').max = new Date().toISOString().split('T')[0];
+      // Enable textareas that were previously not working
+      document.getElementById('medical_history').removeAttribute('readonly');
+      document.getElementById('family_history').removeAttribute('readonly');
+      
+      // Show first step by default
+      showStep(1);
+    });
+
+    // Update doctor-related fields when selection changes
+    document.getElementById('doctorDropdown').addEventListener('change', function() {
+      const selectedId = this.value;
+      const doctorContact = document.getElementById('doctorContact');
+      const doctorHospital = document.getElementById('doctorHospital');
+      
+      if (selectedId) {
+        const selectedDoctor = doctors.find(d => d.id == selectedId);
+        if (selectedDoctor) {
+          doctorContact.value = selectedDoctor.contact;
+          doctorHospital.value = selectedDoctor.hospital;
+        }
+      } else {
+        doctorContact.value = '';
+        doctorHospital.value = '';
+      }
+    });
+
+    // Update hospital fields when hospital selection changes
+    document.getElementById('hospitalDropdown').addEventListener('change', function() {
+      const selectedId = this.value;
+      const hospitalContact = document.getElementById('hospitalContact');
+      
+      if (selectedId) {
+        const selectedHospital = hospitals.find(h => h.id == selectedId);
+        if (selectedHospital) {
+          hospitalContact.value = selectedHospital.contact;
+        }
+      } else {
+        hospitalContact.value = '';
+      }
+    });
+
+    const weightInput = document.getElementById("bodyweight");
+    const heightInput = document.getElementById("height");
+    const bmiInput = document.getElementById("bmi");
+
+    function calculateBMI() {
+      const weight = parseFloat(weightInput.value);
+      const height = parseFloat(heightInput.value);
+      if (!isNaN(weight) && !isNaN(height) && height > 0) {
+        const bmi = (weight / ((height / 100) ** 2)).toFixed(2);
+        bmiInput.value = bmi;
+        
+        // Remove previous BMI classes
+        bmiInput.classList.remove('bmi-underweight', 'bmi-normal', 'bmi-overweight');
+        
+        // Add appropriate class based on BMI value
+        if (bmi < 18.5) {
+          bmiInput.classList.add('bmi-underweight');
+        } else if (bmi >= 18.5 && bmi <= 24.9) {
+          bmiInput.classList.add('bmi-normal');
+        } else {
+          bmiInput.classList.add('bmi-overweight');
+        }
+      } else {
+        bmiInput.value = "";
+        bmiInput.classList.remove('bmi-underweight', 'bmi-normal', 'bmi-overweight');
+      }
+    }
+
+    weightInput.addEventListener("input", calculateBMI);
+    heightInput.addEventListener("input", calculateBMI);
+
+    document.getElementById("patientForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+
+      const response = await fetch("/submit", {
+        method: "POST",
+        body: formData
+      });
+
+      const result = await response.json();
+      const msg = document.getElementById("responseMsg");
+      
+      if (response.ok) {
+        msg.textContent = "✅ Data submitted successfully! PID: " + result.pid;
+        msg.className = "text-green-500";
+        this.reset();
+        bmiInput.value = "";
+        
+        // Reset floating labels
+        document.querySelectorAll('.floating-label input, .floating-label select').forEach(el => {
+          const label = el.nextElementSibling;
+          label.style.top = '18px';
+          label.style.left = '16px';
+          label.style.fontSize = '';
+          label.style.color = '#94a3b8';
+          label.style.fontWeight = '';
+        });
+        
+        // Reset to first step
+        showStep(1);
+        
+        // Display the joined tables
+        displayJoinedTables();
+      } else {
+        msg.textContent = "❌ Error: " + result.error;
+        msg.className = "text-red-500";
+      }
+
+      // Display modal summary
+      displaySubmittedData(formData);
+    });
+
+    let allPatients = [];
+    let currentSortField = 'pid';
+    let sortDirection = 'asc';
+
+    // Function to fetch and refresh patient data
+    async function fetchPatients() {
+      try {
+        const response = await fetch('/all_tables');
+        const data = await response.json();
+        const patientTable = data.find(table => table.name === 'patient');
+        
+        if (patientTable?.data?.length > 0) {
+          allPatients = patientTable.data;
+          const sortedPatients = sortPatients(allPatients, currentSortField, sortDirection);
+          renderPatients(sortedPatients);
+        } else {
+          showNoDataMessage();
+        }
+      } catch (error) {
+        console.error('Error fetching patient data:', error);
+        showErrorMessage();
+      }
+    }
+
+    // Initial load and after delete
+    fetchPatients();
+
+    // Fixed search functionality
+    document.getElementById("search-input").addEventListener("input", function(e) {
+      const searchTerm = e.target.value.toLowerCase().trim();
+      console.log("Searching for:", searchTerm); // Debug log
+      
+      const filteredPatients = allPatients.filter(patient => {
+        const pid = patient.PID?.toString().toLowerCase() || '';
+        const fname = patient.FNAME?.toLowerCase() || '';
+        const lname = patient.LNAME?.toLowerCase() || '';
+        
+        console.log(`Checking patient ${pid}:`, {pid, fname, lname}); // Debug log
+        
+        return pid.includes(searchTerm) || 
+               fname.includes(searchTerm) || 
+               lname.includes(searchTerm);
+      });
+      
+      console.log("Filtered results:", filteredPatients); // Debug log
+      const sortedPatients = sortPatients(filteredPatients, currentSortField, sortDirection);
+      renderPatients(sortedPatients);
+    });
+
+    // Enhanced sort function
+    function sortPatients(patients, field, direction) {
+      return [...patients].sort((a, b) => {
+        const fieldKey = field.toUpperCase();
+        let valA = a[fieldKey] ?? '';
+        let valB = b[fieldKey] ?? '';
+        
+        // Numeric sorting for PID and AGE
+        if (field === 'pid' || field === 'age') {
+          valA = Number(valA) || 0;
+          valB = Number(valB) || 0;
+          return direction === 'asc' ? valA - valB : valB - valA;
+        }
+        
+        // String sorting for other fields
+        valA = String(valA).toLowerCase();
+        valB = String(valB).toLowerCase();
+        return direction === 'asc' 
+          ? valA.localeCompare(valB) 
+          : valB.localeCompare(valA);
+      });
+    }
+
+    // Delete form handler
+    document.querySelector("form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const pid = document.getElementById("pid").value;
+      
+      if (confirm(`Are you sure you want to delete patient ${pid}?`)) {
+        try {
+          const response = await fetch('/delete', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `pid=${encodeURIComponent(pid)}`
+          });
+          
+          if (response.redirected) {
+            // Manually handle the redirect to prevent page reload
+            await fetchPatients();
+            showFlashMessage(`Patient ${pid} deleted successfully`, 'success');
+            document.getElementById("pid").value = ''; // Clear the input field
+          }
+        } catch (error) {
+          console.error('Delete failed:', error);
+          showFlashMessage('Delete failed', 'error');
+        }
+      }
+    });
+
+    // Check URL for success message
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('deleted')) {
+      // Clean the URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+      
+      if (urlParams.get('deleted') === 'true') {
+        showFlashMessage('Patient record deleted successfully', 'success');
+      }
+    }
+  </script>
+</body>
+</html>
