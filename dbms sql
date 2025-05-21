@@ -1,0 +1,504 @@
+CREATE DATABASE HAM;
+USE HAM;
+CREATE TABLE PATIENT(
+PID INT PRIMARY KEY,
+FNAME VARCHAR(20) ,
+LNAME VARCHAR(20),
+AGE INT ,
+DOB DATE ,
+GENDER VARCHAR(10),
+ADDRESS VARCHAR(50),
+CONTACT VARCHAR(10) 
+);
+CREATE TABLE INFORMATION(
+PID INT PRIMARY KEY,
+BODYWEIGHT INT,
+BMI DECIMAL ,
+BLOODTYPE VARCHAR(20),
+FOREIGN KEY (PID) REFERENCES PATIENT(PID)
+);
+CREATE TABLE PATIENTHISTORY(
+PID INT PRIMARY KEY,
+BLOODTYPE VARCHAR(20) ,
+MEDICALHISTORY VARCHAR(200),
+FOREIGN KEY(PID) REFERENCES PATIENT(PID),
+FAMILYHISTORY VARCHAR(200)
+);
+
+CREATE TABLE AMBULANCE(
+AMBID INT PRIMARY KEY,
+VEHICLENO VARCHAR(20) UNIQUE,
+AVAILABILITY BOOLEAN 
+);
+
+CREATE TABLE HOSPITAL(
+HID INT PRIMARY KEY,
+HNAME VARCHAR(200),
+HOSNO VARCHAR(200) UNIQUE,
+HADDRESS VARCHAR(200),
+AMBID INT UNIQUE ,
+FOREIGN KEY (AMBID) REFERENCES AMBULANCE(AMBID)
+);
+
+CREATE TABLE DOCTOR(
+DID INT PRIMARY KEY,
+DNAME VARCHAR(20) ,
+DCONTACT VARCHAR(20) UNIQUE,
+DHOS VARCHAR(50) 
+);
+
+ CREATE TABLE EMERGENCY_DETAILS(
+ PID INT PRIMARY KEY,
+ EMERGENCY_CONTACT VARCHAR(20) ,
+ DOC_ID INT UNIQUE,
+ DOC_NO VARCHAR(20) UNIQUE,
+ PREFERREDHOS INT ,
+ HOSNO VARCHAR(200) ,
+ HNAME VARCHAR(200),
+ FOREIGN KEY(PREFERREDHOS) REFERENCES HOSPITAL(HID),
+ FOREIGN KEY(HOSNO) REFERENCES HOSPITAL(HOSNO),
+ FOREIGN KEY(DOC_NO) REFERENCES DOCTOR(DCONTACT),
+ FOREIGN KEY(DOC_ID) REFERENCES DOCTOR(DID)
+ );
+
+CREATE TABLE LIFESTYLE_FACTOR(
+PID INT PRIMARY KEY,
+SMOKING_STATUS BOOLEAN ,
+ALCOHOL_CONSUMPTION BOOLEAN ,
+DRUG_INTAKE BOOLEAN ,
+PHYSICAL_ACTIVITY VARCHAR(20),
+DIET_PREFERENCES VARCHAR(20),
+FOREIGN KEY (PID) REFERENCES PATIENT(PID)
+);
+
+CREATE TABLE TREATMENTS (
+PID INT PRIMARY KEY,
+TREATMENT_PLAN VARCHAR(20) ,
+MONITORING_DATA VARCHAR(20),
+SURGERY_DETAILS VARCHAR(50) ,
+FOREIGN KEY (PID) REFERENCES PATIENT(PID)
+);
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL
+);
+INSERT INTO PATIENT (PID, FNAME, LNAME, AGE, DOB, GENDER, ADDRESS, CONTACT)
+VALUES
+(1, 'John', 'Doe', 34, '1991-03-12', 'Male', '123 Elm Street', '1234567890'),
+(2, 'Jane', 'Smith', 28, '1997-06-25', 'Female', '456 Oak Avenue', '9876543210'),
+(3, 'Emily', 'Johnson', 45, '1980-07-18', 'Female', '789 Pine Road', '5551234567'),
+(4, 'Michael', 'Brown', 60, '1965-11-22', 'Male', '101 Maple Drive', '5552345678'),
+(5, 'David', 'Wilson', 52, '1973-01-30', 'Male', '202 Birch Boulevard', '5553456789');
+INSERT INTO INFORMATION (PID, BODYWEIGHT, BMI, BLOODTYPE)
+VALUES
+(1, 75, 24.5, 'O+'),
+(2, 58, 21.2, 'A-'),
+(3, 85, 28.0, 'B+'),
+(4, 90, 28.5, 'AB-'),
+(5, 80, 26.3, 'O+');
+INSERT INTO PATIENTHISTORY (PID, BLOODTYPE, MEDICALHISTORY, FAMILYHISTORY)
+VALUES
+(1, 'O+', 'No major medical history', 'Heart disease in father'),
+(2, 'A-', 'Asthma', 'Diabetes in mother'),
+(3, 'B+', 'Hypertension', 'Cancer in aunt'),
+(4, 'AB-', 'Chronic back pain', 'Heart disease in grandmother'),
+(5, 'O+', 'No major medical history', 'No history of illness');
+INSERT INTO AMBULANCE (AMBID, VEHICLENO, AVAILABILITY)
+VALUES
+(1, 'AMB123', TRUE),
+(2, 'AMB124', FALSE),
+(3, 'AMB125', TRUE),
+(4, 'AMB126', TRUE),
+(5, 'AMB127', FALSE);
+INSERT INTO HOSPITAL (HID, HNAME, HOSNO, HADDRESS, AMBID)
+VALUES
+(1, 'Green Valley Hospital', 'H123', '123 Green Valley Road', 1),
+(2, 'Sunrise Health Center', 'H124', '456 Sunrise Blvd', 2),
+(3, 'St. John\'s Medical Center', 'H125', '789 St. John\'s Street', 3),
+(4, 'Riverdale General Hospital', 'H126', '101 Riverdale Drive', 4),
+(5, 'Mountainview Hospital', 'H127', '202 Mountainview Avenue', 5);
+INSERT INTO DOCTOR (DID, DNAME, DCONTACT, DHOS)
+VALUES
+(1, 'Dr. Smith', '123-456-7890', 'Green Valley Hospital'),
+(2, 'Dr. Brown', '234-567-8901', 'Sunrise Health Center'),
+(3, 'Dr. Taylor', '345-678-9012', 'St. John\'s Medical Center'),
+(4, 'Dr. Johnson', '456-789-0123', 'Riverdale General Hospital'),
+(5, 'Dr. Lee', '567-890-1234', 'Mountainview Hospital');
+INSERT INTO EMERGENCYDETAILS (PID, EMERGENCY_CONTACT, DOC_ID, DOC_NO, PREFERREDHOS, HOSNO, HNAME)
+VALUES
+(1, '9876543210', 1, '123-456-7890', 1, 'H123', 'Green Valley Hospital'),
+(2, '8765432109', 2, '234-567-8901', 2, 'H124', 'Sunrise Health Center'),
+(3, '7654321098', 3, '345-678-9012', 3, 'H125', 'St. John\'s Medical Center'),
+(4, '6543210987', 4, '456-789-0123', 4, 'H126', 'Riverdale General Hospital'),
+(5, '5432109876', 5, '567-890-1234', 5, 'H127', 'Mountainview Hospital');
+INSERT INTO LIFESTYLE_FACTOR (PID, SMOKING_STATUS, ALCOHOL_CONSUMPTION, DRUG_INTAKE, PHYSICAL_ACTIVITY, DIET_PREFERENCES)
+VALUES
+(1, TRUE, TRUE, FALSE, 'Moderate', 'Vegetarian'),
+(2, FALSE, TRUE, FALSE, 'High', 'Non-Vegetarian'),
+(3, TRUE, FALSE, TRUE, 'Low', 'Vegan'),
+(4, FALSE, FALSE, FALSE, 'High', 'Balanced'),
+(5, TRUE, TRUE, TRUE, 'Moderate', 'Gluten-Free');
+INSERT INTO TREATMENTS (PID, TREATMENT_PLAN, MONITORING_DATA, SURGERY_DETAILS)
+VALUES
+(1, 'Physical Therapy', 'Weekly monitoring', 'No surgeries'),
+(2, 'Chronic Medication', 'tests every 3 months', 'Knee surgery in 2021'),
+(3, 'Blood Pressure Control', ' check-ups', 'No surgeries'),
+(4, 'Pain Management', 'Pain scale rating', 'Back surgery in 2018'),
+(5, 'Diabetes Management', 'Daily glucose monitoring', 'Appendix surgery in 2015');
+INSERT INTO users (username, password)
+VALUES
+('admin', 'admin123'),
+('doctor1', 'password1'),
+('doctor2', 'password2'),
+('user1', 'userpass1'),
+('user2', 'userpass2');
+SHOW GRANTS FOR 'root'@'localhost';
+SELECT user, host, plugin FROM mysql.user WHERE user = 'root';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'ramya2601';
+FLUSH PRIVILEGES;
+select * from patient;
+ALTER TABLE lifestyle_factor
+DROP FOREIGN KEY lifestyle_factor_ibfk_1;
+
+ALTER TABLE lifestyle_factor
+ADD CONSTRAINT lifestyle_factor_ibfk_1
+FOREIGN KEY (PID) REFERENCES patient(PID)
+ON DELETE CASCADE;
+
+
+ALTER TABLE LIFESTYLE_FACTOR
+ADD CONSTRAINT fk_lifestyle_pid
+FOREIGN KEY (PID) REFERENCES PATIENT(PID) ON DELETE CASCADE;
+
+ALTER TABLE INFORMATION
+ADD CONSTRAINT fk_info_pid
+FOREIGN KEY (PID) REFERENCES PATIENT(PID) ON DELETE CASCADE;
+
+ALTER TABLE PATIENTHISTORY
+ADD CONSTRAINT fk_history_pid
+FOREIGN KEY (PID) REFERENCES PATIENT(PID) ON DELETE CASCADE;
+
+ALTER TABLE TREATMENTS
+ADD CONSTRAINT fk_treatment_pid
+FOREIGN KEY (PID) REFERENCES PATIENT(PID) ON DELETE CASCADE;
+ALTER TABLE patient
+MODIFY PID INT NOT NULL AUTO_INCREMENT PRIMARY KEY;
+
+ALTER TABLE patient DROP id;
+ALTER TABLE patient ADD COLUMN id INT NOT NULL AUTO_INCREMENT UNIQUE FIRST;
+
+ALTER TABLE patient 
+MODIFY PID INT NOT NULL AUTO_INCREMENT PRIMARY KEY;
+
+ALTER TABLE EMERGENCYDETAILS
+ADD CONSTRAINT fk_emergency_pid
+FOREIGN KEY (PID) REFERENCES PATIENT(PID) ON DELETE CASCADE;
+select *from information;
+alter table patient modify column address varchar(200);
+select *from patient;
+DROP TABLE TREATMENT;
+DROP TABLE INFO;
+DROP TABLE LIFESTYLE_FACTORS;
+SHOW CREATE TABLE treatments;
+ALTER TABLE patient MODIFY PID INT NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE lifestyle_factor DROP FOREIGN KEY fk_lifestyle_pid;
+ALTER TABLE information DROP FOREIGN KEY fk_info_pid;
+ALTER TABLE patienthistory DROP FOREIGN KEY fk_history_pid;
+ALTER TABLE emergencydetails DROP FOREIGN KEY fk_emergency_pid;
+ALTER TABLE treatments DROP FOREIGN KEY fk_treatment_pid;
+
+ALTER TABLE patient MODIFY PID INT NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE lifestyle_factor 
+ADD CONSTRAINT fk_lifestyle_pid FOREIGN KEY (PID) REFERENCES patient(PID);
+
+ALTER TABLE information 
+ADD CONSTRAINT fk_info_pid FOREIGN KEY (PID) REFERENCES patient(PID);
+
+ALTER TABLE emergencydetails
+ADD CONSTRAINT fk_emergency_pid FOREIGN KEY (PID) REFERENCES patient(PID);
+
+ALTER TABLE treatments 
+ADD CONSTRAINT fk_treatment_pid FOREIGN KEY (PID) REFERENCES patient(PID);
+
+ALTER TABLE patienthistory
+ADD CONSTRAINT fk_history_pid FOREIGN KEY (PID) REFERENCES patient(PID);
+
+SHOW TABLES IN ham;
+drop table emergencydetails;
+alter table emergency_details modify column preferredhos varchar(50);
+-- Step 1: Drop the foreign key constraint
+ALTER TABLE emergency_details DROP FOREIGN KEY emergency_details_ibfk_1;
+
+-- Step 2: Modify the column
+ALTER TABLE emergency_details MODIFY COLUMN preferredhos VARCHAR(50);
+ALTER TABLE HOSPITAL
+MODIFY COLUMN HID VARCHAR(50);  -- Or CHAR(50), depending on your length
+
+ALTER TABLE emergency_details
+ADD CONSTRAINT emergency_details_ibfk_1
+FOREIGN KEY (preferredhos) REFERENCES HOSPITAL(HID);
+show create table hospital;
+SELECT preferredhos
+FROM emergency_details
+WHERE preferredhos NOT IN (SELECT HID FROM hospital);
+
+SELECT preferredhos
+FROM patient
+WHERE preferredhos NOT IN (SELECT HID FROM hospital);
+
+-- Step 1: Make sure both columns are VARCHAR(10)
+-- (Skip this if you're sure they're already matching)
+
+
+
+-- Step 2: Delete rows in emergency_details with invalid preferredhos values
+DELETE FROM emergency_details
+WHERE preferredhos IS NOT NULL
+  AND preferredhos NOT IN (SELECT HID FROM hospital);
+
+-- Step 3: Drop existing constraint (if it failed partially before)
+-- (Skip if there was no old constraint)
+-- Replace 'fk_emergency_hospital' with the actual name if different
+ALTER TABLE emergency_details
+DROP FOREIGN KEY fk_emergency_hl;
+
+-- Step 4: Add the new foreign key constraint
+ALTER TABLE emergency_details
+ADD CONSTRAINT fk_emergency_hospital
+FOREIGN KEY (preferredhos) REFERENCES hospital(HID)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
+
+ALTER TABLE emergency_details CHANGE preferredhos preferredHospital varchar(50);
+
+SELECT HID FROM hospital;
+
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE treatments;
+TRUNCATE TABLE patienthistory;
+TRUNCATE TABLE lifestyle_factor;
+TRUNCATE TABLE emergency_details;
+TRUNCATE TABLE ambulance;
+TRUNCATE TABLE hospital;
+TRUNCATE TABLE doctor;
+TRUNCATE TABLE information;
+TRUNCATE TABLE patient;
+TRUNCATE TABLE users;
+SET FOREIGN_KEY_CHECKS = 0;
+
+DELETE FROM treatments;
+DELETE FROM patienthistory;
+DELETE FROM lifestyle_factor;
+DELETE FROM emergency_details;
+DELETE FROM ambulance;
+DELETE FROM hospital;
+DELETE FROM doctor;
+DELETE FROM information;
+DELETE FROM patient;
+DELETE FROM users;
+
+SET FOREIGN_KEY_CHECKS = 1;
+DESCRIBE information;
+
+SET FOREIGN_KEY_CHECKS = 1;
+select * from patient;
+truncate patient;
+select * from emergency_details;
+SELECT * FROM doctor WHERE did = 1;
+
+SELECT * FROM hospital;
+select * from doctor;
+ALTER TABLE emergency_details
+CHANGE COLUMN doc_no DCONTACT varchar(20);
+ALTER TABLE emergency_details
+MODIFY DID VARCHAR(20); -- removes UNIQUE if present
+select * from users;
+insert into users values
+(1,'admin','admin123');
+drop table users;
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,  -- Store hashed passwords only!
+    full_name VARCHAR(100),
+    role VARCHAR(20) DEFAULT 'physician',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+alter table users drop column created_at;
+select * from users;
+insert into users values
+( 1,'admin','password','admin','physician');
+delete from doctor;
+DELETE FROM emergency_details;
+
+INSERT INTO DOCTOR (DID, DNAME, DCONTACT, DHOS) VALUES
+(1, 'Dr. Anil Mehta', '9876543210', 'Apollo Hospital'),
+(2, 'Dr. Ritu Sharma', '9876543211', 'Fortis Healthcare'),
+(3, 'Dr. Vikram Patel', '9876543212', 'AIIMS Delhi'),
+(4, 'Dr. Neha Bansal', '9876543213', 'Max Hospital'),
+(5, 'Dr. Arjun Rao', '9876543214', 'Medanta Medicity'),
+(6, 'Dr. Priya Nair', '9876543215', 'Columbia Asia'),
+(7, 'Dr. Karan Gupta', '9876543216', 'Narayana Health'),
+(8, 'Dr. Meera Joshi', '9876543217', 'Lilavati Hospital'),
+(9, 'Dr. Rajeev Das', '9876543218', 'Kokilaben Hospital'),
+(10, 'Dr. Sneha Iyer', '9876543219', 'Manipal Hospital'),
+(11, 'Dr. Suresh Kumar', '9876543220', 'Ruby Hall Clinic'),
+(12, 'Dr. Ananya Sen', '9876543221', 'Care Hospitals'),
+(13, 'Dr. Imran Qureshi', '9876543222', 'Sunshine Hospital'),
+(14, 'Dr. Kavita Menon', '9876543223', 'Cloudnine Hospital'),
+(15, 'Dr. Nikhil Jain', '9876543224', 'Sir Ganga Ram Hospital'),
+(16, 'Dr. Pooja Mishra', '9876543225', 'Jehangir Hospital'),
+(17, 'Dr. Ashok Verma', '9876543226', 'Tata Memorial Hospital'),
+(18, 'Dr. Radhika Shetty', '9876543227', 'Saifee Hospital'),
+(19, 'Dr. Harsh Singh', '9876543228', 'Breach Candy Hospital'),
+(20, 'Dr. Alok Bhatt', '9876543229', 'Hinduja Hospital');
+select * from hospital;
+show create table ambulance;
+delete from hospital;
+delete from ambulance;
+INSERT INTO ambulance (AMBID, VEHICLENO, AVAILABILITY) VALUES
+(1, 'MH12AB1234', 1),
+(2, 'DL8CAF1234', 1),
+(3, 'KA03MN4567', 0),
+(4, 'TN10XY7890', 1),
+(5, 'UP16QW1122', 0),
+(6, 'RJ14UV3344', 1),
+(7, 'GJ05TR5566', 1),
+(8, 'WB20ZX7788', 0),
+(9, 'AP29KL9911', 1),
+(10, 'CH01PQ2233', 0),
+(11, 'MP09AB4455', 1),
+(12, 'HR26CD6677', 1),
+(13, 'BR01EF8899', 0),
+(14, 'OR02GH0001', 1),
+(15, 'AS04IJ2345', 1),
+(16, 'PB10KL6789', 0),
+(17, 'JK01MN3210', 1),
+(18, 'CG03OP4321', 1),
+(19, 'GA06QR6543', 0),
+(20, 'KL07ST7654', 1);
+
+INSERT INTO hospital (HID, HNAME, HOSNO, HADDRESS, AMBID) VALUES
+('H001', 'Apollo Hospital', '011-2223344', 'Delhi, India', 1),
+('H002', 'Fortis Healthcare', '011-2233445', 'Gurgaon, India', 2),
+('H003', 'AIIMS Delhi', '011-2233446', 'Delhi, India', 3),
+('H004', 'Max Hospital', '011-2233447', 'Noida, India', 4),
+('H005', 'Medanta Medicity', '011-2233448', 'Gurgaon, India', 5),
+('H006', 'Columbia Asia', '011-2233449', 'Bangalore, India', 6),
+('H007', 'Narayana Health', '011-2233450', 'Bangalore, India', 7),
+('H008', 'Lilavati Hospital', '011-2233451', 'Mumbai, India', 8),
+('H009', 'Kokilaben Hospital', '011-2233452', 'Mumbai, India', 9),
+('H010', 'Manipal Hospital', '011-2233453', 'Bangalore, India', 10),
+('H011', 'Ruby Hall Clinic', '011-2233454', 'Pune, India', 11),
+('H012', 'Care Hospitals', '011-2233455', 'Hyderabad, India', 12),
+('H013', 'Sunshine Hospital', '011-2233456', 'Hyderabad, India', 13),
+('H014', 'Cloudnine Hospital', '011-2233457', 'Chennai, India', 14),
+('H015', 'Sir Ganga Ram Hospital', '011-2233458', 'Delhi, India', 15),
+('H016', 'Jehangir Hospital', '011-2233459', 'Pune, India', 16),
+('H017', 'Tata Memorial Hospital', '011-2233460', 'Mumbai, India', 17),
+('H018', 'Saifee Hospital', '011-2233461', 'Mumbai, India', 18),
+('H019', 'Breach Candy Hospital', '011-2233462', 'Mumbai, India', 19),
+('H020', 'Hinduja Hospital', '011-2233463', 'Mumbai, India', 20);
+SHOW INDEX FROM PATIENT;
+SHOW INDEX FROM EMERGENCY_DETAILS;
+SELECT 
+    TABLE_NAME, COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+FROM
+    INFORMATION_SCHEMA.KEY_COLUMN_USAGE
+WHERE
+    TABLE_NAME = 'EMERGENCY_DETAILS' AND COLUMN_NAME = 'did';
+
+ALTER TABLE emergency_details DROP INDEX DID;
+select * from emergency_details;
+ALTER TABLE emergency_details DROP INDEX constraint_name;
+
+
+SHOW INDEX FROM emergency_details;
+ALTER TABLE emergency_details DROP INDEX DOC_ID;
+SELECT CONSTRAINT_NAME 
+FROM information_schema.KEY_COLUMN_USAGE 
+WHERE TABLE_NAME = 'emergency_details' AND COLUMN_NAME = 'DID' AND CONSTRAINT_SCHEMA = DATABASE();
+
+ALTER TABLE emergency_details DROP FOREIGN KEY emergency_details_ibfk_4;
+ALTER TABLE emergency_details DROP INDEX DOC_ID;
+ALTER TABLE emergency_details 
+ADD CONSTRAINT fk_emergency_doc 
+FOREIGN KEY (DID) REFERENCES doctor(DID);
+show create table emergency_details;
+select * from patient;
+select * from emergency_details;
+select * from information;
+select * from patienthistory;
+select * from lifestyle_factor;
+select * from treatments;
+select * from doctor;
+select * from hospital;
+show create table doctor;
+show create table emergency_details;
+-- First add a regular index if one doesn't exist
+ALTER TABLE `emergency_details` ADD INDEX `DCONTACT_idx` (`DCONTACT`);
+use ham;
+-- Then drop the unique constraint
+ALTER TABLE `emergency_details` DROP KEY `DOC_NO`;
+alter table emergency_details add column doctorname varchar(20) not null;
+ALTER TABLE emergency_details DROP COLUMN heart_block_percentage;
+alter table information add column heart_block_percentage  int not null;
+alter table information add column heart_attack_type varchar(50) not null;
+alter table information add column prevattack_history varchar(200) not null ;
+alter table information add column cholestrol int not null ;
+alter table information add column blood_pressure varchar(20) not null ;
+alter table information add column heartrate varchar(20) not null ;
+alter table information add column diabetes varchar(20) not null ;
+ALTER TABLE information
+MODIFY diabetes varchar(200) NULL;
+alter table patient add column email varchar(200) null;
+alter table emergency_details add column name varchar(200) not null;
+ ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'ramya2601';
+FLUSH PRIVILEGES;
+GRANT ALL PRIVILEGES ON HAM.* TO 'root'@'localhost';
+FLUSH PRIVILEGES;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'ramya2601';
+FLUSH PRIVILEGES;
+show create table information;
+alter table information modify  heart_attack_type varchar(200) null;
+select * from emergency_details;
+alter table emergency_details add column  ename varchar(200) null;
+alter table patient modify column gender varchar(20) null;
+alter table treatments modify column surgery_details varchar(500) null;
+SELECT 
+    P.PID,
+    P.fname AS patient_name,
+    H.HID,
+    H.hname AS hospital_name,
+    D.DID,
+    D.dname AS doctor_name
+FROM EMERGENCY_DETAILS ED
+JOIN PATIENT P ON ED.PID = P.PID
+JOIN DOCTOR D ON ED.DID = D.DID
+JOIN HOSPITAL H ON ED.preferredHospital=H.HID;
+
+
+SELECT DISTINCT TRIM(LOWER(preferredHospital)) FROM EMERGENCY_DETAILS;
+SELECT DISTINCT TRIM(LOWER(hname)) FROM HOSPITAL;
+
+
+alter table patienthistory drop  bloodtype;
+DESCRIBE hospital;
+
+SELECT 
+    p.PID, p.FNAME, p.LNAME, p.AGE, p.DOB, p.GENDER, p.ADDRESS, p.CONTACT,
+    ph.MEDICALHISTORY, ph.FAMILYHISTORY,
+    t.TREATMENT_PLAN, t.MONITORING_DATA, t.SURGERY_DETAILS,
+    i.BODYWEIGHT, i.BMI, i.BLOODTYPE AS INFO_BLOODTYPE
+FROM 
+    PATIENT p
+JOIN 
+    PATIENTHISTORY ph ON p.PID = ph.PID
+JOIN 
+    TREATMENTS t ON p.PID = t.PID
+JOIN 
+    INFORMATION i ON p.PID = i.PID;
